@@ -1,5 +1,7 @@
 # process_im3
 
+library(here)
+
 # i think state id and county id are actually FIPS codes
 im3 %>%
   anti_join(
@@ -48,6 +50,3 @@ nrow(im3_by_county)
 # no na
 any(is.na(im3_by_county))
 names(im3_by_county)
-
-
-

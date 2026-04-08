@@ -1,7 +1,20 @@
 # main
-library(here)
 
+## dependencies
+if (!requireNamespace("renv", quietly = TRUE)) {
+  install.packages("renv")
+}
+
+renv::restore(prompt = FALSE)
+
+library(here)
 source(here("R", "packages.R"))
-source(here("R", "import.R"))
-source(here("R", "process_census.R"))
-source(here("R", "process_im3.R"))
+
+## import modules
+source(here("R", "import.R")) # make sure you put your census API key in data/private/private_data.R
+
+## process the modules
+source(here("R", "process.R"))
+
+## join the data together
+source(here("R", "matched_data.R"))
