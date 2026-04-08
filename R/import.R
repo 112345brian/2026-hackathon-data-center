@@ -5,7 +5,13 @@ library(tidyverse)
 library(tidycensus)
 
 ## import census key
-source(here("private", "private_data.R"))
+private_file <- here("private", "private_data.R")
+if (!file.exists(private_file)) {
+  # this creates a census API file if you don't have it. 
+  #add your census key to this file.
+  dir.create(dirname(private_file), recursive = TRUE, showWarnings = FALSE)
+}
+source(private_file)
 
 
 ## import imp3
