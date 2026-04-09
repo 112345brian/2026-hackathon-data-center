@@ -3,7 +3,6 @@
 source(here("R", "import_census_API_setup.R"))
 
 census_vars <- load_variables(2022, "acs5", cache = TRUE)
-View(census_vars)
 
 county_data <- get_acs(
   geography = "county",

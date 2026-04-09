@@ -2,10 +2,10 @@
 # returns the dataset for the treated and not treated counties
 
 # create treated and control groups
-treated <- full_data %>% filter(data_center == 1)
-control_pool <- full_data %>% filter(data_center == 0)
+treated <- county_and_im3 %>% filter(data_center == 1)
+control_pool <- county_and_im3 %>% filter(data_center == 0)
 
-table(full_data$data_center)
+table(county_and_im3$data_center)
 
 # find a pair county in same state, the one with the closest population match
 matched_controls <- treated %>%
