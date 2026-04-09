@@ -4,7 +4,6 @@ library(here)
 library(janitor)
 library(tidyverse)
 
-counties_with_datacenters <- counties_with_datacenters |>
-  clean_names() |>
-  left_join(y = ami, by = c("geoid" = "fip"))
+counties <- counties_with_datacenters |>
+  left_join(y = ami |> select(-name, -state), by = c("geoid" = "fip"))
   

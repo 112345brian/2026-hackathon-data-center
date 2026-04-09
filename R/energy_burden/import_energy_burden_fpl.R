@@ -9,8 +9,9 @@ fpl <- map(fpl_files, function(f) {
   read_csv(f, show_col_types = FALSE) |>
     clean_names() |>
     select(fip, name, state, fpl150, hincp_units, elep_units, gasp_units, fulp_units) |>
+    mutate(fip = str_pad(as.character(fip), width = 5, pad = "0")) |>
     group_by(fip, name, state, fpl150) |>
-    summarise( # the data are in super granular combinations. this aggregates them
+    summarise(
       hincp_units = sum(hincp_units, na.rm = TRUE),
       elep_units = sum(elep_units, na.rm = TRUE),
       gasp_units = sum(gasp_units, na.rm = TRUE),

@@ -9,6 +9,7 @@ ami <- map(ami_files, function(f) {
   read_csv(f, show_col_types = FALSE) |>
     clean_names() |>
     select(fip, name, state, ami150, hincp_units, elep_units, gasp_units, fulp_units) |>
+    mutate(fip = str_pad(as.character(fip), width = 5, pad = "0")) |>
     group_by(fip, name, state, ami150) |>
     summarise( # the data are in super granular combinations. this aggregates them
       hincp_units = sum(hincp_units, na.rm = TRUE),
