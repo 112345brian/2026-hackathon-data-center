@@ -2,9 +2,6 @@
 
 library(here)
 
-head(county_data)
-names(county_data)
-
 # pivot wider
 county_data <- county_data %>%
   select(GEOID, NAME, variable, estimate) %>%

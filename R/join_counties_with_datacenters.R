@@ -1,4 +1,5 @@
-# matched data
+# join_counties_with_datacenters
+# returns the dataset for the treated and not treated counties
 
 # create treated and control groups
 treated <- full_data %>% filter(data_center == 1)
@@ -6,7 +7,7 @@ control_pool <- full_data %>% filter(data_center == 0)
 
 table(full_data$data_center)
 
-# Find a pair county in same state, the one with the closest population match
+# find a pair county in same state, the one with the closest population match
 matched_controls <- treated %>%
   mutate(treated_geoid = GEOID) %>%   # track original
   rowwise() %>%
@@ -33,21 +34,7 @@ treated <- treated %>%
 matched_controls <- matched_controls %>%
   mutate(pair_id = treated_geoid)
 
-matched_data <- bind_rows(
+counties_with_datacenters <- bind_rows(
   treated %>% mutate(group = "treated"),
   matched_controls %>% mutate(group = "control")
 )
-
-# check
-n_distinct(matched_controls$treated_geoid)
-nrow(treated)
-
-# did matching work? 
-matched_data %>%
-  group_by(pair_id) %>%
-  summarise(
-    treated_pop = population[group == "treated"],
-    control_pop = population[group == "control"],
-    diff = abs(treated_pop - control_pop)
-  ) %>%
-  summary()

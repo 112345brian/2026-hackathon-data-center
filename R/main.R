@@ -17,4 +17,4 @@ source(here("R", "import.R")) # make sure you put your census API key in data/pr
 source(here("R", "process.R"))
 
 ## join the data together
-source(here("R", "matched_data.R"))
+source(here("R", "join.R"))
