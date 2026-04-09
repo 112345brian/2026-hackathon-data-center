@@ -1,7 +1,5 @@
 # process_im3
 
-library(here)
-
 # i think state id and county id are actually FIPS codes
 im3 %>%
   anti_join(
