@@ -38,3 +38,8 @@ counties_with_datacenters <- bind_rows(
   treated %>% mutate(group = "treated"),
   matched_controls %>% mutate(group = "control")
 )
+
+saveRDS(
+  counties_with_datacenters,
+  here("data", "output", "analysis.rds")
+)
