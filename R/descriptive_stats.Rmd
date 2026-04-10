@@ -1,0 +1,93 @@
+---
+title: "regression_data_centeres "
+output: html_document
+date: "2026-04-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+counties_with_datacenters <- read.csv("//Users//jeanetteperthel//Documents//GitHub//2026-hackathon-data-center//outputdata//counties_with_datacenters.csv")
+
+```
+
+# Descriptive statistics
+
+total of 414 observations
+
+```{r}
+# make state column
+dc_states <- counties_with_datacenters%>%
+    mutate(state = str_extract(name, "(?<=, ).*"))%>%
+  group_by(state)%>%
+  summarize(n_state = n())%>%
+  arrange(desc(n_state))
+
+# plot number of counties per state in dataset
+ggplot(data = dc_states, aes(x = state, y = n_state)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+
+```
+
+Stats
+
+```{r pressure, echo=FALSE}
+no_dc <- counties_with_datacenters %>%
+  filter(data_center == "0")
+
+dc <- counties_with_datacenters%>%
+  filter(data_center == "1")
+
+
+
+no_dc_stats <- no_dc %>%
+  summarise(
+    n = n(),
+    mean_income = mean(no_dc$median_income, na.rm = TRUE),
+    median_income = median(no_dc$median_income, na.rm = TRUE),
+    sd_income = sd(no_dc$median_income, na.rm = TRUE),
+    min_median_income = min(no_dc$median_income),
+    max_income = max(no_dc$median_income, na.rm = TRUE)
+  )
+
+
+dc_stats <- dc %>%
+  summarise(
+    n = n(),
+    mean_income = mean(dc$median_income, na.rm = TRUE),
+    median_income = median(dc$median_income, na.rm = TRUE),
+    sd_income = sd(dc$median_income, na.rm = TRUE),
+    min_median_income = min(dc$median_income),
+    max_income = max(dc$median_income, na.rm = TRUE)
+  )
+
+
+all_stats <- counties_with_datacenters%>%
+  summarise(
+    n = n(),
+    mean_income = mean(counties_with_datacenters$median_income, na.rm = TRUE),
+    median_income = median(counties_with_datacenters$median_income, na.rm = TRUE),
+    sd_income = sd(counties_with_datacenters$median_income, na.rm = TRUE),
+    min_median_income = min(counties_with_datacenters$median_income),
+    max_income = max(counties_with_datacenters$median_income, na.rm = TRUE)
+  )
+
+
+
+
+
+ summary(no_dc)
+hist(no_dc$median_income)
+
+hist(dc$median_income)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+
+lm()
+
+```
