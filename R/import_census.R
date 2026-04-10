@@ -43,3 +43,4 @@ county_data <- get_acs(
   year = 2022,
   survey = "acs5"
 )
+
