@@ -2,12 +2,11 @@
 library(tidycensus)
 library(here)
 
+census_key <- "b8f4e69bd8fdee3a5697c1528315ad923550659c"
+
 ## private file guard
 key <- Sys.getenv("CENSUS_API_KEY")
 
-if (key == "" && !exists("census_key")) {
-  source(here("private", "private_data.R"))
-}
 
 if (exists("census_key")) {
   census_api_key(census_key, install = TRUE, overwrite = TRUE)

@@ -1,7 +1,5 @@
 # import_census
 
-source(here("R", "census", "import_census_API_setup.R"))
-
 census_vars <- load_variables(2022, "acs5", cache = TRUE)
 
 county_data <- get_acs(
