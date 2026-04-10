@@ -12,17 +12,26 @@ if (file.exists(imp3_path)) {
 }
 
 im3_facilities <- im3_facilities |>
-  clean_names() |>
+  clean_names()
+
+has_state_columns <- all(c("state_id", "county_id") %in% names(im3_facilities))
+has_state_abb <- "state_abb" %in% names(im3_facilities)
+
+im3_facilities <- im3_facilities |>
   mutate(
-    fip = if ("state_id" %in% names(.)) {
+    fip = if (has_state_columns) {
       str_pad(paste0(state_id, county_id), width = 5, pad = "0")
     } else {
-      fip
+      str_pad(as.character(fip), width = 5, pad = "0")
     },
     data_center = 1
   ) |>
-  filter(!state %in% c("Puerto Rico", "District of Columbia"),
-         !state_abb %in% c("PR", "DC"))
+  filter(!state %in% c("Puerto Rico", "District of Columbia"))
+
+if (has_state_abb) {
+  im3_facilities <- im3_facilities |>
+    filter(!state_abb %in% c("PR", "DC"))
+}
 
 im3_by_county <- im3_facilities |>
   group_by(fip) |>
