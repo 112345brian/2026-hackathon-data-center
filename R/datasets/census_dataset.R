@@ -1,19 +1,3 @@
-# census_dataset
-
-# ensure a Census API key is available and registered
-census_key <- Sys.getenv("CENSUS_API_KEY")
-
-if (census_key == "") {
-  default_key <- "b8f4e69bd8fdee3a5697c1528315ad923550659c"
-  census_api_key(default_key, install = TRUE, overwrite = TRUE)
-  readRenviron("~/.Renviron")
-  census_key <- Sys.getenv("CENSUS_API_KEY")
-}
-
-if (census_key == "") {
-  stop("No Census API key found")
-}
-
 census_data <- get_acs(
   geography = "county",
   variables = c(
@@ -37,7 +21,20 @@ census_data <- get_acs(
     retail = "C24030_006",
     information = "C24030_007",
     finance = "C24030_008",
-    total_employed = "C24030_001"
+    total_employed = "C24030_001",
+    
+    # housing age (B25034)
+    year_built_2014_plus = "B25034_002",
+    year_built_2010_2013 = "B25034_003",
+    year_built_2000_2009 = "B25034_004",
+    year_built_1990_1999 = "B25034_005",
+    year_built_1980_1989 = "B25034_006",
+    year_built_1970_1979 = "B25034_007",
+    year_built_1960_1969 = "B25034_008",
+    year_built_1950_1959 = "B25034_009",
+    year_built_1940_1949 = "B25034_010",
+    year_built_1939_or_earlier = "B25034_011",
+    total_housing = "B25034_001"
   ),
   year = 2022,
   survey = "acs5"
@@ -45,4 +42,20 @@ census_data <- get_acs(
   clean_names() |>
   select(geoid, name, variable, estimate) |>
   pivot_wider(names_from = variable, values_from = estimate) |>
-  mutate(geoid = as.character(geoid))
+  mutate(
+    geoid = as.character(geoid),
+    
+    avg_house_age =
+      (
+        year_built_2014_plus * 5 +
+          year_built_2010_2013 * 10 +
+          year_built_2000_2009 * 18 +
+          year_built_1990_1999 * 28 +
+          year_built_1980_1989 * 38 +
+          year_built_1970_1979 * 48 +
+          year_built_1960_1969 * 58 +
+          year_built_1950_1959 * 68 +
+          year_built_1940_1949 * 78 +
+          year_built_1939_or_earlier * 90
+      ) / total_housing
+  )

@@ -1,7 +1,8 @@
 # analysis_regression
 
 counties_with_datacenters_and_fips <- counties |>
-  clean_names()
+  clean_names() |>
+  mutate(state = substr(geoid, 1, 2))
 
 data_center_on_burden <- lm(ami_energy_burden_all ~ data_center + as.factor(state), data = counties_with_datacenters_and_fips)
 
