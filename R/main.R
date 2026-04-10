@@ -10,11 +10,12 @@ renv::restore(prompt = FALSE)
 library(here)
 source(here("R", "packages.R"))
 
-## import modules
-source(here("R", "import.R")) # make sure you put your census API key in data/private/private_data.R
+## create individual datasets
+source(here("R", "datasets", "im3_dataset.R"))
+source(here("R", "datasets", "census_dataset.R"))
+source(here("R", "datasets", "energy_burden_dataset.R"))
+source(here("R", "datasets", "gdp_dataset.R"))
+source(here("R", "datasets", "urbanicity_dataset.R"))
 
-## process the modules
-source(here("R", "process.R"))
-
-## join the data together
-source(here("R", "join.R"))
+## assemble the analysis dataset
+source(here("R", "build_analysis_dataset.R"))
