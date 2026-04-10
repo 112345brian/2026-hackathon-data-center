@@ -18,3 +18,6 @@ source(here("R", "process.R"))
 
 ## join the data together
 source(here("R", "join.R"))
+
+getwd()
+write.csv(counties_with_datacenters, "outputdata/counties_with_datacenters.csv")
