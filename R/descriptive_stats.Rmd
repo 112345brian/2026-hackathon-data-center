@@ -42,6 +42,23 @@ dc <- counties_with_datacenters%>%
 
 
 
+energy_burden <- no_dc %>%
+  summarise(
+    n = n(),
+    mean_income = mean(no_dc$median_income, na.rm = TRUE),
+    median_income = median(no_dc$median_income, na.rm = TRUE),
+    sd_income = sd(no_dc$median_income, na.rm = TRUE),
+    min_median_income = min(no_dc$median_income),
+    max_income = max(no_dc$median_income, na.rm = TRUE)
+  )
+
+
+
+
+
+
+
+
 no_dc_stats <- no_dc %>%
   summarise(
     n = n(),
@@ -86,8 +103,17 @@ hist(dc$median_income)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
+
+# join energy burden
 ```{r}
 
-lm()
+counties_with_datacenters <- counties_with_datacenters %>%
+  mutate(geoid = as.numeric(geoid))
+
+energy_burden <- energy_burden %>%
+  mutate(fip = as.numeric(fip))
+
+data_centers_with_energy_burden <- left_join(counties_with_datacenters, energy_burden, by = c("geoid"= "fip"))%>%
+  dplyr::select(-name.x, -state.x, -name.y, -state.y)
 
 ```

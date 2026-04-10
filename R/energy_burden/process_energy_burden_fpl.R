@@ -1,7 +1,7 @@
 # process_energy_burden_fpl
 
 ## give the energy scores
-fpl <- fpl |>
+fpl2 <- fpl |>
   filter(hincp_units > 0) |> # remove negative income
   ### bracket-level energy burden
   mutate(energy_burden = (elep_units + gasp_units + fulp_units) / hincp_units,
@@ -16,6 +16,8 @@ fpl <- fpl |>
   ### poorest households only
   mutate(energy_burden_poor = ifelse(fpl150 == "0-100%", energy_burden, NA))
 ## give it as counties
-fpl <- fpl |>
+fpl3 <- fpl2 |>
   filter(fpl150 == "0-100%") |>
-  select(fip, name, state, energy_burden_all, energy_burden_poor)
+  select(fip, name, state, energy_burden_all, energy_burden_poor)%>%
+  rename(energy_burden_all_fpl = energy_burden_all,
+        energy_burden_poor_fpl = energy_burden_poor)
