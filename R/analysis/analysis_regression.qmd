@@ -17,8 +17,8 @@ df <- df |>
   mutate(
     state = substr(geoid, 1, 2),
     metro = case_when(
-      stringr::str_detect(metro_description, regex("nonmetro", ignore_case = TRUE)) ~ 0,
-      stringr::str_detect(metro_description, regex("metro", ignore_case = TRUE)) ~ 1,
+      stringr::str_detect(metro_description, stringr::regex("nonmetro", ignore_case = TRUE)) ~ 0,
+      stringr::str_detect(metro_description, stringr::regex("metro", ignore_case = TRUE)) ~ 1,
       TRUE ~ NA_real_
     )
   )
@@ -87,7 +87,7 @@ summary(lm(log1p(median_rent) ~ data_center + metro + as.factor(state), data = d
 ## Energy Burden with Age Control
 
 ```{r}
-summary(lm(ami_energy_burden_all ~ data_center + median_age, data = df))
-summary(lm(ami_energy_burden_all ~ data_center + median_age + as.factor(state), data = df))
-summary(lm(ami_energy_burden_all ~ data_center + median_age + metro + as.factor(state), data = df))
+summary(lm(ami_energy_burden_all ~ data_center + median_house_age, data = df))
+summary(lm(ami_energy_burden_all ~ data_center + median_house_age + as.factor(state), data = df))
+summary(lm(ami_energy_burden_all ~ data_center + median_house_age + metro + as.factor(state), data = df))
 ```
