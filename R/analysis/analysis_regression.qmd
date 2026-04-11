@@ -14,7 +14,14 @@ df <- readRDS(here("data", "output", "analysis.rds"))
 
 # create state FE
 df <- df |>
-  mutate(state = substr(geoid, 1, 2))
+  mutate(
+    state = substr(geoid, 1, 2),
+    metro = case_when(
+      stringr::str_detect(metro_description, regex("nonmetro", ignore_case = TRUE)) ~ 0,
+      stringr::str_detect(metro_description, regex("metro", ignore_case = TRUE)) ~ 1,
+      TRUE ~ NA_real_
+    )
+  )
 ```
 
 ## No Controls
@@ -35,7 +42,7 @@ summary(lm(gini ~ data_center + as.factor(state), data = df))
 summary(lm(log1p(current_dollar_gdp_thousands_of_current_dollars) ~ data_center + as.factor(state), data = df))
 ```
 
----
+------------------------------------------------------------------------
 
 log standardizing turns the beta coefficient into a percentage. that's why we're doing log1p() on the median income. (also big numbers make head hurt)
 
@@ -75,4 +82,12 @@ summary(lm(log1p(median_income) ~ data_center + metro + as.factor(state), data =
 ```{r}
 summary(lm(log1p(median_home_value) ~ data_center + metro + as.factor(state), data = df))
 summary(lm(log1p(median_rent) ~ data_center + metro + as.factor(state), data = df))
+```
+
+## Energy Burden with Age Control
+
+```{r}
+summary(lm(ami_energy_burden_all ~ data_center + median_age, data = df))
+summary(lm(ami_energy_burden_all ~ data_center + median_age + as.factor(state), data = df))
+summary(lm(ami_energy_burden_all ~ data_center + median_age + metro + as.factor(state), data = df))
 ```

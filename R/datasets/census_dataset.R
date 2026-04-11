@@ -5,6 +5,7 @@ census_data <- get_acs(
     median_income = "B19013_001",
     poverty = "B17001_002",
     gini = "B19083_001",
+    median_age = "B01002_001",
     white = "B02001_002",
     black = "B02001_003",
     hispanic = "B03003_003",
