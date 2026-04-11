@@ -3,6 +3,7 @@ title: "Regression Results"
 format:
   html:
     embed-resources: true
+toc: true
 ---
 
 ```{r}
@@ -10,7 +11,7 @@ library(dplyr)
 library(here)
 
 # load final analysis dataset
-df <- readRDS(here("data", "output", "analysis.rds"))
+df <- readRDS(here("data", "output", "analysis_dataset.rds"))
 
 # create state FE
 df <- df |>
@@ -84,10 +85,75 @@ summary(lm(log1p(median_home_value) ~ data_center + metro + as.factor(state), da
 summary(lm(log1p(median_rent) ~ data_center + metro + as.factor(state), data = df))
 ```
 
+## Income and GDP with Resident Age Control
+
+```{r}
+summary(lm(median_income ~ data_center + median_resident_age, data = df))
+summary(lm(median_income ~ data_center + median_resident_age + as.factor(state), data = df))
+summary(lm(log1p(current_dollar_gdp_thousands_of_current_dollars) ~ data_center + median_resident_age, data = df))
+summary(lm(log1p(current_dollar_gdp_thousands_of_current_dollars) ~ data_center + median_resident_age + as.factor(state), data = df))
+```
+
+```{r age-wtf}
+df_age_wtf <- df |> mutate(age_c = median_resident_age - mean(median_resident_age))
+
+quad <- lm(median_income ~ data_center + age_c + I(age_c^2) + as.factor(state), data = df_age_wtf)
+
+df_age_wtf |> 
+  mutate(age_bin = cut(median_resident_age, breaks = 10)) |>
+  group_by(age_bin) |>
+  summarize(mean_income = mean(median_income))
+
+summary(quad)$coefficients
+```
+
+```{r age-distracted}
+summary(lm(median_income ~ data_center + median_resident_age + as.factor(state), data = df))
+```
+
+## With all controls
+
+```{r control-with-metro}
+summary(lm(median_income ~ data_center + median_resident_age + metro + as.factor(state), data = df))
+```
+
 ## Energy Burden with Age Control
 
 ```{r}
 summary(lm(ami_energy_burden_all ~ data_center + median_house_age, data = df))
 summary(lm(ami_energy_burden_all ~ data_center + median_house_age + as.factor(state), data = df))
 summary(lm(ami_energy_burden_all ~ data_center + median_house_age + metro + as.factor(state), data = df))
+```
+
+## Final Analysis
+
+```{r final-analysis}
+# Median Income (levels) 
+summary(lm(median_income ~ data_center + median_resident_age + metro + as.factor(state), data = df))
+
+# Median Income (log)
+
+summary(lm(log1p(median_income) ~ data_center + metro + as.factor(state), data = df))
+
+# GDP (log)
+
+summary(lm(log1p(current_dollar_gdp_thousands_of_current_dollars) ~ data_center + median_resident_age + metro + as.factor(state), data = df))
+
+# Energy Burden
+
+summary(lm(ami_energy_burden_all ~ data_center + median_house_age + metro + as.factor(state), data = df))
+
+# Inequality (Gini)
+
+summary(lm(gini ~ data_center + metro + as.factor(state), data = df))
+
+# Home Values (log)
+
+summary(lm(log1p(median_home_value) ~ data_center + metro + as.factor(state), data = df))
+
+# Rent (log)
+
+summary(lm(log1p(median_rent) ~ data_center + metro + as.factor(state), data = df))
+
+
 ```

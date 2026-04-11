@@ -29,4 +29,5 @@ gdp_data <- gdp_raw |>
     )
   ) |>
   pivot_wider(names_from = Description, values_from = value_2023) |>
+  distinct(geoid, .keep_all = TRUE) |>
   clean_names()

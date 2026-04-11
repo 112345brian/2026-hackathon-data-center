@@ -15,6 +15,7 @@ Script: `R/datasets/census_dataset.R`
 
 - Pulls 2022 ACS 5-year estimates for demographic, education, housing, and economic variables.
 - The **`median_house_age`** variable is derived from `B25035_001` (“Median Year Structure Built”). We convert that median year into “years old” by computing `2022 - median_year_structure_built`, giving the median house age relative to the 2022 reference year.
+- The **`median_resident_age`** variable comes directly from ACS table `B01002_001`; it captures the median age of residents in each county.
 - All ACS estimates are reshaped to one row per county (`pivot_wider`) and keyed by `geoid` (character).
 
 ## Energy Burden (AMI + FPL)
@@ -41,19 +42,16 @@ Script: `R/datasets/urbanicity_dataset.R`
   - **`rucc_2023`** – Rural/urban code.
   - **`metro_description`** – Text description of the metro/non-metro classification.
 
-## Matching + Final Dataset
+## Final Dataset Assembly
 Script: `R/build_analysis_dataset.R`
 
-1. **`analysis_base`** joins ACS data with IM3 per-county counts. Counties without data centers have `data_center`/`n_data_centers` set to zero.
-2. Treated counties (`data_center == 1`) are matched to control counties from the same state with the closest population.
-3. The final matched table exposes:
-   - **`pair_id`** – The treated county’s `geoid`, assigned to both treated and matched control rows.
-   - **`group`** – Categorical flag with the values `"treated"` or `"control"` to identify the matched unit type.
-4. The matched frame is saved twice: once as **`counties_with_datacenters`** (for legacy compatibility) and once as **`analysis_dataset`**, which also joins:
-   - **`energy_burden_data`** (AMI burden columns).
+1. **`analysis_dataset`** begins with the ACS table and joins the per-county IM3 counts. Counties without an IM3 record have `data_center` and `n_data_centers` set to zero, so every county appears exactly once.
+2. The dataset then left-joins:
+   - **`energy_burden_data`** (AMI burden columns, keyed by `fip`).
    - **`gdp_data`** (2023 GDP metrics per BEA description).
    - **`urbanicity_data`** (RUCC code and metro description).
-5. The combined output filters to rows where `ami_energy_burden_all` is present and is persisted to `data/output/analysis_dataset.rds` (and the legacy `analysis.rds`).
+3. After the joins we call `distinct(geoid, .keep_all = TRUE)` so each county appears only once, drop any rows without `ami_energy_burden_all`, and strip legacy matching columns (`pair_id`, `group`, `pop_diff`, `treated_geoid`) so the dataset only contains per-county attributes.
+4. The resulting county-level table is saved to `data/output/analysis_dataset.rds` and exposed as the `counties` object for downstream analysis.
 
 ## Derived Variables Used Only in Analysis
 

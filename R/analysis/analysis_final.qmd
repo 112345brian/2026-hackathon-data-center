@@ -1,0 +1,59 @@
+---
+title: "Regression Results"
+format:
+  html:
+    embed-resources: true
+toc: true
+---
+
+```{r}
+library(dplyr)
+library(here)
+
+# load final analysis dataset
+df <- readRDS(here("data", "output", "analysis_dataset.rds"))
+
+# create state FE
+df <- df |>
+  mutate(
+    state = substr(geoid, 1, 2),
+    metro = case_when(
+      stringr::str_detect(metro_description, stringr::regex("nonmetro", ignore_case = TRUE)) ~ 0,
+      stringr::str_detect(metro_description, stringr::regex("metro", ignore_case = TRUE)) ~ 1,
+      TRUE ~ NA_real_
+    )
+  )
+```
+
+## Final Analysis
+
+```{r final-analysis}
+# Median Income (levels) 
+summary(lm(median_income ~ data_center + median_resident_age + metro + as.factor(state), data = df))
+
+# Median Income
+
+summary(lm(median_income ~ data_center + metro + as.factor(state), data = df))
+
+# GDP
+
+summary(lm(current_dollar_gdp_thousands_of_current_dollars ~ data_center + median_resident_age + metro + as.factor(state), data = df))
+
+# Energy Burden
+
+summary(lm(ami_energy_burden_all ~ data_center + median_house_age + metro + as.factor(state), data = df))
+
+# Inequality (Gini)
+
+summary(lm(gini ~ data_center + metro + as.factor(state), data = df))
+
+# Home Values (log)
+
+summary(lm(median_home_value ~ data_center + metro + as.factor(state), data = df))
+
+# Rent
+
+summary(lm(median_rent ~ data_center + metro + as.factor(state), data = df))
+
+
+```

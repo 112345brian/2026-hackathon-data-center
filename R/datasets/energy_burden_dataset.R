@@ -32,7 +32,8 @@ ami_energy <- ami_data |>
 
 ami_energy_by_county <- ami_energy |>
   filter(ami150 == "0-30%") |>
-  select(fip, name, state, energy_burden_all, energy_burden_poor)
+  select(fip, name, state, energy_burden_all, energy_burden_poor) |>
+  distinct(fip, .keep_all = TRUE)
 
 fpl_files <- list.files(here("data", "raw", "energy_burden", "counties", "FPL"), full.names = TRUE)
 fpl_data <- map(fpl_files, function(f) {
